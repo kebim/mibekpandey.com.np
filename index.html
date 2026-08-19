@@ -37,6 +37,8 @@
             --code-bg: #f1f4f9;
             --max-width: 1280px;
             --ad-bg: #f0f2f5;
+            --success: #22c55e;
+            --danger: #ef4444;
         }
         .dark {
             --bg: #0d1117;
@@ -592,6 +594,11 @@
         .tool-panel .btn:active {
             transform: translateY(0);
         }
+        .tool-panel .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
         .tool-panel .result-box {
             margin-top: 20px;
             padding: 16px 20px;
@@ -602,9 +609,10 @@
             font-size: 0.9rem;
             white-space: pre-wrap;
             word-break: break-all;
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
             min-height: 60px;
+            transition: background var(--transition), border var(--transition);
         }
         .tool-panel .result-box .label {
             font-weight: 600;
@@ -620,6 +628,9 @@
         .tool-panel .result-row:last-child {
             border-bottom: none;
         }
+        .tool-panel .result-error {
+            color: var(--danger);
+        }
 
         /* ───────────── TEACHING MATERIALS ───────────── */
         .teaching-grid {
@@ -634,6 +645,7 @@
             padding: 24px;
             box-shadow: var(--shadow);
             transition: all var(--transition);
+            cursor: pointer;
         }
         .teaching-card:hover {
             transform: translateY(-3px);
@@ -835,6 +847,30 @@
         .reveal.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* spinner */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .result-box .spinner {
+            border-color: var(--border);
+            border-top-color: var(--accent);
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -1110,7 +1146,7 @@
                 </div>
             </div>
 
-            <!-- Teaching detail panel (hidden until a card is clicked) -->
+            <!-- Teaching detail panel -->
             <div class="tool-panel reveal" id="teachingPanel" style="display:none;">
                 <button class="close-panel" id="closeTeachingPanel" aria-label="Close teaching panel">✕</button>
                 <div id="teachingContent">
@@ -1309,6 +1345,16 @@
             }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
             reveals.forEach(el => revealObserver.observe(el));
 
+            // ─── Helper: set result loading/error ────────────
+            function setResult(resultEl, html, isError = false) {
+                resultEl.innerHTML = html;
+                if (isError) {
+                    resultEl.classList.add('result-error');
+                } else {
+                    resultEl.classList.remove('result-error');
+                }
+            }
+
             // ─── Tool definitions ─────────────────────────────
             const TOOLS = {
 
@@ -1331,12 +1377,12 @@
                             const cidr = parseInt(document.getElementById('subnetCidr').value);
                             const result = document.getElementById('subnetResult');
                             if (!ip || isNaN(cidr) || cidr < 0 || cidr > 32) {
-                                result.textContent = '❌ Please enter a valid IP and CIDR (0–32).';
+                                setResult(result, '❌ Please enter a valid IP and CIDR (0–32).', true);
                                 return;
                             }
                             const parts = ip.split('.').map(Number);
                             if (parts.length !== 4 || parts.some(p => isNaN(p) || p < 0 || p > 255)) {
-                                result.textContent = '❌ Invalid IP address format.';
+                                setResult(result, '❌ Invalid IP address format.', true);
                                 return;
                             }
                             const ipInt = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
@@ -1347,8 +1393,9 @@
                             const last = broadcast - 1;
                             const hosts = Math.max(0, broadcast - net - 1);
 
-                            const fmt = (n) => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
-                            result.innerHTML = `
+                            const fmt = (n) => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join(
+                            '.');
+                            setResult(result, `
                                 <div class="result-row"><span class="label">Network Address</span> <span>${fmt(net)}</span></div>
                                 <div class="result-row"><span class="label">Broadcast Address</span> <span>${fmt(broadcast)}</span></div>
                                 <div class="result-row"><span class="label">First Usable Host</span> <span>${hosts > 0 ? fmt(first) : '—'}</span></div>
@@ -1356,14 +1403,14 @@
                                 <div class="result-row"><span class="label">Total Usable Hosts</span> <span>${hosts}</span></div>
                                 <div class="result-row"><span class="label">Subnet Mask</span> <span>${fmt(mask)}</span></div>
                                 <div class="result-row"><span class="label">CIDR Notation</span> <span>/${cidr}</span></div>
-                            `;
+                            `);
                         });
                     }
                 },
 
                 ping: {
                     title: '📡 Ping Tool',
-                    desc: 'Test connectivity to any host or IP address (simulated).',
+                    desc: 'Test connectivity to any host or IP address (simulated with realistic latency).',
                     render: () => `
                         <label for="pingHost">Hostname or IP</label>
                         <input type="text" id="pingHost" value="google.com" placeholder="e.g. google.com" />
@@ -1379,7 +1426,7 @@
                             const host = document.getElementById('pingHost').value.trim() || 'unknown';
                             const count = parseInt(document.getElementById('pingCount').value) || 4;
                             const result = document.getElementById('pingResult');
-                            result.innerHTML = '⏳ Pinging ' + host + ' ...';
+                            setResult(result, '⏳ Pinging ' + host + ' ...');
                             let lines = [];
                             let success = 0;
                             let totalTime = 0;
@@ -1397,18 +1444,19 @@
                             const avg = success > 0 ? (totalTime / success).toFixed(2) : '—';
                             const loss = ((count - success) / count * 100).toFixed(0);
                             setTimeout(() => {
-                                result.innerHTML =
+                                setResult(result,
                                     lines.join('\n') +
                                     `\n\n📊 Packets: Sent = ${count}, Received = ${success}, Lost = ${loss}% ` +
-                                    `(${count - success}), Avg RTT = ${avg}ms`;
+                                    `(${count - success}), Avg RTT = ${avg}ms`
+                                );
                             }, 400);
                         });
                     }
                 },
 
                 dns: {
-                    title: '🔍 DNS Lookup',
-                    desc: 'Resolve a domain name to its IP addresses (simulated).',
+                    title: '🔍 DNS Lookup (Real DNS via Google DNS-over-HTTPS)',
+                    desc: 'Resolve a domain name to its IP addresses using Google\'s public DNS API.',
                     render: () => `
                         <label for="dnsDomain">Domain Name</label>
                         <input type="text" id="dnsDomain" value="example.com" placeholder="e.g. example.com" />
@@ -1427,60 +1475,44 @@
                         <div class="result-box" id="dnsResult">Enter a domain and select record type.</div>
                     `,
                     init: () => {
-                        document.getElementById('dnsBtn')?.addEventListener('click', () => {
+                        document.getElementById('dnsBtn')?.addEventListener('click', async () => {
                             const domain = document.getElementById('dnsDomain').value.trim() || 'example.com';
                             const type = document.getElementById('dnsType').value;
                             const result = document.getElementById('dnsResult');
-                            result.innerHTML = '⏳ Resolving ' + domain + ' (' + type + ') ...';
-                            const ips = ['93.184.216.34', '104.18.32.7', '172.217.5.78', '142.250.185.46',
-                                '2606:2800:220:1:248:1893:25c8:1946'
-                            ];
-                            const cnames = ['www.' + domain, 'cdn.' + domain];
-                            const mx = ['mail.' + domain, 'mx1.' + domain];
-                            const txt = ['v=spf1 include:_spf.google.com ~all', 'google-site-verification=...'];
-                            const ns = ['ns1.' + domain, 'ns2.' + domain];
-                            const random = (arr) => arr[Math.floor(Math.random() * arr.length)];
-                            setTimeout(() => {
-                                let lines = [];
-                                if (type === 'A') {
-                                    lines.push('A records for ' + domain + ':');
-                                    for (let i = 0; i < 2 + Math.floor(Math.random() * 3); i++) {
-                                        lines.push('  → ' + random(ips));
-                                    }
-                                } else if (type === 'AAAA') {
-                                    lines.push('AAAA records for ' + domain + ':');
-                                    for (let i = 0; i < 1 + Math.floor(Math.random() * 2); i++) {
-                                        lines.push('  → ' + random(ips).replace(/\./g, ':'));
-                                    }
-                                } else if (type === 'CNAME') {
-                                    lines.push('CNAME record for ' + domain + ':');
-                                    lines.push('  → ' + random(cnames));
-                                } else if (type === 'MX') {
-                                    lines.push('MX records for ' + domain + ':');
-                                    for (let i = 0; i < 2; i++) {
-                                        const pri = [10, 20, 30][i];
-                                        lines.push(`  ${pri} → ${random(mx)}`);
-                                    }
-                                } else if (type === 'TXT') {
-                                    lines.push('TXT records for ' + domain + ':');
-                                    for (let i = 0; i < 1 + Math.floor(Math.random() * 2); i++) {
-                                        lines.push('  "' + random(txt) + '"');
-                                    }
-                                } else if (type === 'NS') {
-                                    lines.push('NS records for ' + domain + ':');
-                                    for (let i = 0; i < 2; i++) {
-                                        lines.push('  → ' + random(ns));
-                                    }
+                            const btn = document.getElementById('dnsBtn');
+                            btn.disabled = true;
+                            setResult(result, '⏳ Resolving ' + domain + ' (' + type +
+                                ') ... <span class="spinner"></span>');
+                            try {
+                                const url =
+                                    `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=${type}`;
+                                const resp = await fetch(url);
+                                if (!resp.ok) throw new Error('DNS API error: ' + resp.status);
+                                const data = await resp.json();
+                                if (data.Status !== 0) {
+                                    throw new Error('DNS lookup failed (Status ' + data.Status + ')');
                                 }
-                                result.textContent = lines.join('\n');
-                            }, 500);
+                                let lines = [];
+                                if (data.Answer && data.Answer.length > 0) {
+                                    data.Answer.forEach(ans => {
+                                        lines.push(ans.data);
+                                    });
+                                } else {
+                                    lines.push('No records found for ' + domain + ' (' + type + ')');
+                                }
+                                setResult(result, lines.join('\n'));
+                            } catch (err) {
+                                setResult(result, '❌ Error: ' + err.message, true);
+                            } finally {
+                                btn.disabled = false;
+                            }
                         });
                     }
                 },
 
                 port: {
                     title: '🔌 Port Scanner',
-                    desc: 'Scan common ports on a target host (simulated).',
+                    desc: 'Scan common ports on a target host (simulated – real scanning not possible from browser).',
                     render: () => `
                         <label for="portHost">Hostname or IP</label>
                         <input type="text" id="portHost" value="scanme.nmap.org" placeholder="e.g. scanme.nmap.org" />
@@ -1496,10 +1528,10 @@
                             const host = document.getElementById('portHost').value.trim() || 'unknown';
                             const range = document.getElementById('portRange').value.trim() || '20-80';
                             const result = document.getElementById('portResult');
-                            result.innerHTML = '⏳ Scanning ' + host + ' ...';
+                            setResult(result, '⏳ Scanning ' + host + ' ...');
                             const [start, end] = range.split('-').map(Number);
                             if (isNaN(start) || isNaN(end) || start < 1 || end > 65535 || start > end) {
-                                result.textContent = '❌ Invalid port range. Use e.g. "20-80"';
+                                setResult(result, '❌ Invalid port range. Use e.g. "20-80"', true);
                                 return;
                             }
                             const openPorts = [];
@@ -1521,14 +1553,16 @@
                             openPorts.sort((a, b) => a - b);
                             setTimeout(() => {
                                 if (openPorts.length === 0) {
-                                    result.textContent = `🔒 No open ports found in range ${start}-${end} on ${host}.`;
+                                    setResult(result,
+                                        `🔒 No open ports found in range ${start}-${end} on ${host}.`
+                                        );
                                 } else {
                                     let lines = [`📡 Open ports on ${host} (${start}-${end}):`];
                                     openPorts.forEach(p => {
                                         const svc = common[p] || 'unknown';
                                         lines.push(`  ✅ ${p}  (${svc})`);
                                     });
-                                    result.textContent = lines.join('\n');
+                                    setResult(result, lines.join('\n'));
                                 }
                             }, 600 + Math.random() * 400);
                         });
@@ -1536,8 +1570,8 @@
                 },
 
                 whois: {
-                    title: '👤 IP WHOIS',
-                    desc: 'Look up ownership details for an IP address (simulated).',
+                    title: '👤 IP WHOIS (via ipinfo.io)',
+                    desc: 'Look up geolocation and ownership details for any IP address.',
                     render: () => `
                         <label for="whoisIp">IP Address</label>
                         <input type="text" id="whoisIp" value="8.8.8.8" placeholder="e.g. 8.8.8.8" />
@@ -1546,37 +1580,43 @@
                         <div class="result-box" id="whoisResult">Enter an IP address and click Lookup.</div>
                     `,
                     init: () => {
-                        document.getElementById('whoisBtn')?.addEventListener('click', () => {
+                        document.getElementById('whoisBtn')?.addEventListener('click', async () => {
                             const ip = document.getElementById('whoisIp').value.trim() || '8.8.8.8';
                             const result = document.getElementById('whoisResult');
-                            result.innerHTML = '⏳ Querying WHOIS for ' + ip + ' ...';
-                            const orgs = ['Google LLC', 'CloudFlare Inc.', 'Amazon Web Services',
-                                'Microsoft Corporation', 'Akamai Technologies', 'Fastly Inc.'
-                            ];
-                            const countries = ['US', 'DE', 'GB', 'JP', 'CA', 'FR', 'AU'];
-                            const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
-                            setTimeout(() => {
-                                const org = rand(orgs);
-                                const country = rand(countries);
-                                result.innerHTML = `
-                                    WHOIS record for ${ip}
-                                    ──────────────────────────────
-                                    Org Name      : ${org}
-                                    Country       : ${country}
-                                    Registry      : ${['ARIN','RIPE','APNIC','LACNIC'][Math.floor(Math.random()*4)]}
-                                    Net Range     : ${ip.replace(/\.\d+$/, '.0/24')}
-                                    CIDR          : ${ip.replace(/\.\d+$/, '.0/24')}
-                                    Abuse Contact : abuse@${org.toLowerCase().replace(/\s/g,'')}.com
-                                    Last Updated  : ${new Date().toISOString().slice(0,10)}
-                                `;
-                            }, 500);
+                            const btn = document.getElementById('whoisBtn');
+                            btn.disabled = true;
+                            setResult(result, '⏳ Querying WHOIS for ' + ip +
+                                ' ... <span class="spinner"></span>');
+                            try {
+                                const url = `https://ipinfo.io/${encodeURIComponent(ip)}/json`;
+                                const resp = await fetch(url);
+                                if (!resp.ok) throw new Error('IPinfo API error: ' + resp.status);
+                                const data = await resp.json();
+                                if (data.error) throw new Error(data.error);
+                                const lines = [];
+                                lines.push(`WHOIS record for ${data.ip || ip}`);
+                                lines.push(`──────────────────────────────`);
+                                lines.push(`Org Name      : ${data.org || '—'}`);
+                                lines.push(`Country       : ${data.country || '—'}`);
+                                lines.push(`Region        : ${data.region || '—'}`);
+                                lines.push(`City          : ${data.city || '—'}`);
+                                lines.push(`Postal        : ${data.postal || '—'}`);
+                                lines.push(`Location      : ${data.loc || '—'}`);
+                                lines.push(`Timezone      : ${data.timezone || '—'}`);
+                                lines.push(`Hostname      : ${data.hostname || '—'}`);
+                                setResult(result, lines.join('\n'));
+                            } catch (err) {
+                                setResult(result, '❌ Error: ' + err.message, true);
+                            } finally {
+                                btn.disabled = false;
+                            }
                         });
                     }
                 },
 
                 speed: {
                     title: '⚡ Speed Test',
-                    desc: 'Estimate your download and upload speeds (simulated).',
+                    desc: 'Estimate your network download and upload speeds (simulated with realistic values).',
                     render: () => `
                         <p style="color:var(--text-light);margin-bottom:12px;">Click the button below to run a speed test. This is a simulation.</p>
                         <button class="btn" id="speedBtn">⚡ Run Speed Test</button>
@@ -1585,28 +1625,28 @@
                     init: () => {
                         document.getElementById('speedBtn')?.addEventListener('click', () => {
                             const result = document.getElementById('speedResult');
-                            result.innerHTML = '⏳ Testing connection ...';
+                            setResult(result, '⏳ Testing connection ... <span class="spinner"></span>');
                             const download = (20 + Math.random() * 180).toFixed(1);
                             const upload = (5 + Math.random() * 60).toFixed(1);
                             const ping = (8 + Math.random() * 42).toFixed(0);
                             const jitter = (1 + Math.random() * 8).toFixed(1);
                             setTimeout(() => {
-                                result.innerHTML = `
+                                setResult(result, `
                                     📥 Download: ${download} Mbps
                                     📤 Upload:   ${upload} Mbps
                                     📶 Ping:     ${ping} ms
                                     〰️ Jitter:   ${jitter} ms
                                     ──────────────────────────────
                                     ✅ Test complete.
-                                `;
+                                `);
                             }, 1200 + Math.random() * 800);
                         });
                     }
                 },
 
                 mac: {
-                    title: '🖥️ MAC Lookup',
-                    desc: 'Find the vendor or manufacturer for any MAC address.',
+                    title: '🖥️ MAC Lookup (via macvendors.com)',
+                    desc: 'Find the vendor or manufacturer for any MAC address using the public MAC vendor API.',
                     render: () => `
                         <label for="macAddr">MAC Address</label>
                         <input type="text" id="macAddr" value="00:1A:2B:3C:4D:5E" placeholder="e.g. 00:1A:2B:3C:4D:5E" />
@@ -1615,41 +1655,42 @@
                         <div class="result-box" id="macResult">Enter a MAC address and click Lookup.</div>
                     `,
                     init: () => {
-                        document.getElementById('macBtn')?.addEventListener('click', () => {
+                        document.getElementById('macBtn')?.addEventListener('click', async () => {
                             const mac = document.getElementById('macAddr').value.trim().toUpperCase();
                             const result = document.getElementById('macResult');
+                            const btn = document.getElementById('macBtn');
+                            btn.disabled = true;
                             // Basic MAC validation
                             const clean = mac.replace(/[^0-9A-F]/g, '');
                             if (clean.length !== 12) {
-                                result.textContent = '❌ Invalid MAC address. Use format like 00:1A:2B:3C:4D:5E';
+                                setResult(result,
+                                    '❌ Invalid MAC address. Use format like 00:1A:2B:3C:4D:5E', true);
+                                btn.disabled = false;
                                 return;
                             }
-                            const oui = clean.slice(0, 6);
-                            const vendors = {
-                                '001A2B': 'Cisco Systems',
-                                '0050F2': 'Microsoft',
-                                '00D08C': 'Dell Inc.',
-                                '001B63': 'Apple Inc.',
-                                '001E4F': 'Google Inc.',
-                                '002590': 'Intel Corporation',
-                                '001A11': 'Broadcom',
-                                '0080C6': 'Hewlett Packard',
-                                '0050BA': 'Siemens',
-                                '001A6B': 'Nokia',
-                                '001C42': 'Juniper Networks',
-                                '001122': 'Test Vendor',
-                                '001A2C': 'Samsung',
-                                '001A3D': 'LG Electronics',
-                                '001A4E': 'Sony',
-                            };
-                            const vendor = vendors[oui] || 'Unknown / Unassigned';
-                            result.innerHTML = `
-                                MAC Address   : ${mac}
-                                OUI (Prefix)  : ${oui}
-                                Vendor        : ${vendor}
-                                ──────────────────────────────
-                                ✅ Lookup complete.
-                            `;
+                            setResult(result, '⏳ Looking up MAC ' + mac +
+                                ' ... <span class="spinner"></span>');
+                            try {
+                                const url = `https://api.macvendors.com/${clean}`;
+                                const resp = await fetch(url);
+                                if (resp.status === 404) {
+                                    throw new Error('Vendor not found for this MAC.');
+                                }
+                                if (!resp.ok) throw new Error('MAC API error: ' + resp.status);
+                                const vendor = await resp.text();
+                                const formatted = mac.replace(/(.{2})(?!$)/g, '$1:');
+                                setResult(result, `
+                                    MAC Address   : ${formatted}
+                                    OUI (Prefix)  : ${clean.slice(0,6)}
+                                    Vendor        : ${vendor.trim() || 'Unknown'}
+                                    ──────────────────────────────
+                                    ✅ Lookup complete.
+                                `);
+                            } catch (err) {
+                                setResult(result, '❌ Error: ' + err.message, true);
+                            } finally {
+                                btn.disabled = false;
+                            }
                         });
                     }
                 }
@@ -1699,10 +1740,8 @@
                     const tool = el.dataset.tool;
                     if (tool && TOOLS[tool]) {
                         openTool(tool);
-                        // close mobile menu
                         navLinks.classList.remove('open');
                         hamburger.setAttribute('aria-expanded', 'false');
-                        // update active
                         document.querySelectorAll('.nav-links a[data-tool]').forEach(a => {
                             a.classList.toggle('active', a.dataset.tool === tool);
                         });
@@ -1850,7 +1889,6 @@
                 const section = card.dataset.section;
                 if (section && teachingData[section]) {
                     openTeaching(section);
-                    // highlight nav
                     document.querySelectorAll('.nav-links a[data-section]').forEach(el => {
                         el.classList.toggle('active', el.dataset.section === section);
                     });
