@@ -1,9 +1,1929 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Welcome to my website - Mibek Pandey</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NetPro Tools – Network Suite & Learning Hub</title>
+    <meta name="description" content="Free network tools suite: subnet calculator, ping, DNS lookup, port scanner, WHOIS, speed test, and teaching materials for networking professionals." />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>" />
+
+    <!-- Google AdSense placeholder – replace with your own ad code when approved -->
+    <meta name="google-adsense-account" content="ca-pub-xxxxxxxxxxxxxxxx" />
+
+    <style>
+        /* ───────────── RESET & BASE ───────────── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #f4f7fc;
+            --bg-card: #ffffff;
+            --text: #1a2332;
+            --text-light: #4a5a72;
+            --primary: #1e3a6f;
+            --primary-light: #2a5298;
+            --accent: #00b4d8;
+            --accent-glow: rgba(0, 180, 216, 0.25);
+            --border: #e2e8f0;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            --radius: 16px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --nav-bg: rgba(30, 58, 111, 0.92);
+            --nav-text: #ffffff;
+            --code-bg: #f1f4f9;
+            --max-width: 1280px;
+            --ad-bg: #f0f2f5;
+        }
+        .dark {
+            --bg: #0d1117;
+            --bg-card: #161b22;
+            --text: #e6edf3;
+            --text-light: #8b949e;
+            --primary: #1f6feb;
+            --primary-light: #388bfd;
+            --accent: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.2);
+            --border: #30363d;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            --nav-bg: rgba(13, 17, 23, 0.95);
+            --nav-text: #e6edf3;
+            --code-bg: #1c2333;
+            --ad-bg: #161b22;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background var(--transition), color var(--transition);
+            padding-top: 70px;
+        }
+        a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+        a:hover {
+            color: var(--accent);
+        }
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ───────────── SCROLLBAR ───────────── */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* ───────────── NAVIGATION ───────────── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--nav-bg);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            transition: background var(--transition), border var(--transition);
+            height: 70px;
+            display: flex;
+            align-items: center;
+        }
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--nav-text);
+            letter-spacing: -0.5px;
+        }
+        .nav-brand span {
+            color: var(--accent);
+        }
+        .nav-brand img {
+            height: 32px;
+            width: 32px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            list-style: none;
+        }
+        .nav-links>li {
+            position: relative;
+        }
+        .nav-links>li>a,
+        .nav-links>li>button {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            color: var(--nav-text);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background var(--transition), color var(--transition);
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .nav-links>li>a:hover,
+        .nav-links>li>button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--accent);
+        }
+        .nav-links>li>a.active {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .dropdown-icon {
+            font-size: 0.7rem;
+            transition: transform var(--transition);
+        }
+        .nav-links>li:hover .dropdown-icon {
+            transform: rotate(180deg);
+        }
+
+        /* dropdown menu */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%) translateY(6px);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 0;
+            min-width: 220px;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: all var(--transition);
+            list-style: none;
+        }
+        .nav-links>li:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+        .dropdown-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px;
+            color: var(--text);
+            font-size: 0.9rem;
+            transition: background var(--transition), color var(--transition);
+            border-left: 3px solid transparent;
+        }
+        .dropdown-menu li a:hover {
+            background: var(--accent-glow);
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+        .dropdown-menu li a .icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* nav actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--nav-text);
+            padding: 6px 8px;
+            border-radius: 10px;
+            transition: background var(--transition);
+            line-height: 1;
+        }
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .hamburger span {
+            display: block;
+            width: 26px;
+            height: 2.5px;
+            background: var(--nav-text);
+            border-radius: 4px;
+            transition: all var(--transition);
+        }
+
+        /* mobile nav */
+        @media (max-width: 920px) {
+            .hamburger {
+                display: flex;
+            }
+            .nav-links {
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                flex-direction: column;
+                background: var(--bg-card);
+                border-bottom: 1px solid var(--border);
+                padding: 16px 24px;
+                gap: 4px;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: all var(--transition);
+                box-shadow: var(--shadow);
+                max-height: calc(100vh - 70px);
+                overflow-y: auto;
+                align-items: stretch;
+            }
+            .nav-links.open {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            .nav-links>li>a,
+            .nav-links>li>button {
+                padding: 12px 16px;
+                width: 100%;
+                justify-content: space-between;
+                color: var(--text);
+            }
+            .nav-links>li>a:hover,
+            .nav-links>li>button:hover {
+                background: var(--accent-glow);
+                color: var(--accent);
+            }
+            .dropdown-menu {
+                position: static;
+                transform: none;
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                box-shadow: none;
+                border: none;
+                border-left: 3px solid var(--accent);
+                border-radius: 0;
+                padding: 0 0 0 16px;
+                margin: 4px 0 8px 0;
+                background: transparent;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease, padding 0.3s ease;
+                padding: 0 0 0 16px;
+            }
+            .nav-links>li:hover .dropdown-menu {
+                transform: none;
+            }
+            .nav-links>li.dropdown-open .dropdown-menu {
+                max-height: 600px;
+                padding: 8px 0 8px 16px;
+            }
+            .dropdown-menu li a {
+                color: var(--text-light);
+                padding: 8px 12px;
+            }
+            .dropdown-menu li a:hover {
+                background: transparent;
+                color: var(--accent);
+            }
+            .nav-actions .theme-toggle {
+                color: var(--text);
+            }
+        }
+
+        /* ───────────── HERO ───────────── */
+        .hero {
+            padding: 60px 0 40px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #fff;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero .container {
+            position: relative;
+            z-index: 1;
+        }
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 12px;
+            line-height: 1.15;
+        }
+        .hero h1 .highlight {
+            color: var(--accent);
+            background: rgba(0, 180, 216, 0.2);
+            padding: 0 12px;
+            border-radius: 12px;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            opacity: 0.85;
+            max-width: 680px;
+            margin: 0 auto 24px;
+            line-height: 1.7;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(6px);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 16px;
+        }
+        .hero-badge span {
+            background: var(--accent);
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ───────────── SECTION COMMON ───────────── */
+        section {
+            padding: 40px 0;
+        }
+        .section-title {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .section-sub {
+            color: var(--text-light);
+            margin-bottom: 32px;
+            font-size: 1.05rem;
+        }
+        .section-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+        .section-header .section-title {
+            margin-bottom: 0;
+        }
+
+        /* ───────────── TOOLS GRID ───────────── */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: all var(--transition);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+        .dark .tool-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        .tool-card .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .tool-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .tool-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        .tool-card .tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .tool-card .arrow {
+            position: absolute;
+            bottom: 16px;
+            right: 20px;
+            font-size: 1.2rem;
+            opacity: 0.4;
+            transition: opacity var(--transition);
+        }
+        .tool-card:hover .arrow {
+            opacity: 1;
+        }
+
+        /* ───────────── TOOL PANEL (active tool view) ───────────── */
+        .tool-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow);
+            margin-top: 32px;
+            display: none;
+            animation: fadeUp 0.4s ease;
+        }
+        .tool-panel.active {
+            display: block;
+        }
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .tool-panel .panel-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .tool-panel .panel-desc {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+        .tool-panel .close-panel {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color var(--transition);
+            line-height: 1;
+        }
+        .tool-panel .close-panel:hover {
+            color: var(--text);
+        }
+
+        /* form elements inside tools */
+        .tool-panel label {
+            display: block;
+            font-weight: 500;
+            margin: 16px 0 4px;
+            font-size: 0.9rem;
+        }
+        .tool-panel input,
+        .tool-panel select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            transition: border var(--transition);
+            font-family: inherit;
+        }
+        .tool-panel input:focus,
+        .tool-panel select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .tool-panel .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-top: 16px;
+            font-family: inherit;
+        }
+        .tool-panel .btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 58, 111, 0.3);
+        }
+        .dark .tool-panel .btn:hover {
+            box-shadow: 0 6px 20px rgba(31, 111, 235, 0.3);
+        }
+        .tool-panel .btn:active {
+            transform: translateY(0);
+        }
+        .tool-panel .result-box {
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: var(--code-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+            min-height: 60px;
+        }
+        .tool-panel .result-box .label {
+            font-weight: 600;
+            color: var(--text-light);
+            font-family: inherit;
+        }
+        .tool-panel .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .tool-panel .result-row:last-child {
+            border-bottom: none;
+        }
+
+        /* ───────────── TEACHING MATERIALS ───────────── */
+        .teaching-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .teaching-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+        .teaching-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+        .teaching-card .icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        .teaching-card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .teaching-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        .teaching-card .sub-menu {
+            margin-top: 12px;
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .teaching-card .sub-menu li {
+            font-size: 0.8rem;
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 2px 14px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+
+        /* ───────────── ADSENSE PLACEHOLDER ───────────── */
+        .ad-placeholder {
+            background: var(--ad-bg);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin: 32px 0;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background var(--transition), border var(--transition);
+        }
+        .ad-placeholder .ad-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+        }
+        .ad-placeholder .ad-content {
+            font-weight: 500;
+        }
+
+        /* ───────────── FOOTER ───────────── */
+        footer {
+            background: var(--primary);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 40px 0 24px;
+            margin-top: 40px;
+            border-radius: 40px 40px 0 0;
+        }
+        footer .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 32px;
+        }
+        footer h4 {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        footer ul {
+            list-style: none;
+        }
+        footer ul li {
+            margin-bottom: 6px;
+        }
+        footer ul li a {
+            color: rgba(255, 255, 255, 0.7);
+            transition: color var(--transition);
+            font-size: 0.9rem;
+        }
+        footer ul li a:hover {
+            color: var(--accent);
+        }
+        footer .copyright {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+
+        /* ───────────── RESPONSIVE TWEAKS ───────────── */
+        @media (max-width: 600px) {
+            body {
+                padding-top: 62px;
+            }
+            nav {
+                height: 62px;
+            }
+            .nav-brand {
+                font-size: 1.1rem;
+            }
+            .hero {
+                padding: 40px 0 30px;
+                border-radius: 0 0 24px 24px;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            .teaching-grid {
+                grid-template-columns: 1fr;
+            }
+            .tool-panel {
+                padding: 20px;
+            }
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            footer {
+                border-radius: 24px 24px 0 0;
+                padding: 28px 0 16px;
+            }
+            footer .container {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+
+        /* ───────────── UTILITIES ───────────── */
+        .text-center {
+            text-align: center;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .mt-24 {
+            margin-top: 24px;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .flex-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* live indicator */
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse-dot 1.8s infinite;
+            margin-right: 6px;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+        }
+
+        /* smooth section reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
-    <h1>My Web App is Coming Soon!</h1>
-</body
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- NAVIGATION -->
+    <!-- ════════════════════════════════════════ -->
+    <nav role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <a href="#" class="nav-brand" aria-label="NetPro Tools Home">
+                <span>🌐</span> Net<span>Pro</span>
+            </a>
+
+            <ul class="nav-links" id="navLinks" role="menubar">
+                <!-- Home -->
+                <li role="none"><a href="#home" role="menuitem" class="active">Home</a></li>
+
+                <!-- Network Tools Dropdown -->
+                <li role="none" class="has-dropdown">
+                    <button role="menuitem" aria-haspopup="true" aria-expanded="false">
+                        🛠️ Tools <span class="dropdown-icon">▾</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-tool="subnet" role="menuitem"><span class="icon">🧮</span> Subnet Calculator</a></li>
+                        <li><a href="#" data-tool="ping" role="menuitem"><span class="icon">📡</span> Ping Tool</a></li>
+                        <li><a href="#" data-tool="dns" role="menuitem"><span class="icon">🔍</span> DNS Lookup</a></li>
+                        <li><a href="#" data-tool="port" role="menuitem"><span class="icon">🔌</span> Port Scanner</a></li>
+                        <li><a href="#" data-tool="whois" role="menuitem"><span class="icon">👤</span> IP WHOIS</a></li>
+                        <li><a href="#" data-tool="speed" role="menuitem"><span class="icon">⚡</span> Speed Test</a></li>
+                        <li><a href="#" data-tool="mac" role="menuitem"><span class="icon">🖥️</span> MAC Lookup</a></li>
+                    </ul>
+                </li>
+
+                <!-- Teaching Dropdown -->
+                <li role="none" class="has-dropdown">
+                    <button role="menuitem" aria-haspopup="true" aria-expanded="false">
+                        📚 Learn <span class="dropdown-icon">▾</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#teaching" data-section="basics" role="menuitem"><span class="icon">📖</span> Networking Basics</a></li>
+                        <li><a href="#teaching" data-section="subnetting" role="menuitem"><span class="icon">📐</span> Subnetting Guide</a></li>
+                        <li><a href="#teaching" data-section="tcpip" role="menuitem"><span class="icon">📡</span> TCP/IP Fundamentals</a></li>
+                        <li><a href="#teaching" data-section="security" role="menuitem"><span class="icon">🔒</span> Network Security</a></li>
+                        <li><a href="#teaching" data-section="routing" role="menuitem"><span class="icon">🔄</span> Routing &amp; Switching</a></li>
+                        <li><a href="#teaching" data-section="cloud" role="menuitem"><span class="icon">☁️</span> Cloud Networking</a></li>
+                        <li><a href="#teaching" data-section="exam" role="menuitem"><span class="icon">🎯</span> Exam Prep</a></li>
+                    </ul>
+                </li>
+
+                <li role="none"><a href="#about" role="menuitem">About</a></li>
+                <li role="none"><a href="#contact" role="menuitem">Contact</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">🌙</button>
+                <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- HERO / HOME -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-badge">
+                <span class="live-dot"></span> Live &bull; Free &bull; Open
+            </div>
+            <h1>
+                Network Tools<br />
+                <span class="highlight">for Professionals</span>
+            </h1>
+            <p>
+                Subnet calculators, ping, DNS lookup, port scanning, WHOIS, speed tests,
+                and a complete learning library — all in one place.
+            </p>
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:8px;">
+                <a href="#tools" class="btn" style="background:#fff;color:var(--primary);padding:12px 32px;border-radius:40px;font-weight:600;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.1);">Explore Tools →</a>
+                <a href="#teaching" class="btn" style="background:rgba(255,255,255,0.12);color:#fff;padding:12px 32px;border-radius:40px;font-weight:600;text-decoration:none;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.15);">Start Learning</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- AD PLACEHOLDER – TOP -->
+    <!-- ════════════════════════════════════════ -->
+    <div class="container">
+        <div class="ad-placeholder" id="ad-top">
+            <span class="ad-label">📢 Advertisement</span>
+            <span class="ad-content">Your Google AdSense unit will appear here.</span>
+            <span style="font-size:0.75rem;opacity:0.5;">Replace with your ad code after approval.</span>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- TOOLS SECTION -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="tools">
+        <div class="container">
+            <div class="section-header reveal">
+                <div>
+                    <h2 class="section-title">🛠️ Network Tools Suite</h2>
+                    <p class="section-sub">Professional-grade tools for network diagnostics and analysis.</p>
+                </div>
+            </div>
+
+            <!-- Tools Grid -->
+            <div class="tools-grid reveal" id="toolsGrid">
+                <div class="tool-card" data-tool="subnet">
+                    <span class="icon">🧮</span>
+                    <h3>Subnet Calculator</h3>
+                    <p>Calculate CIDR, subnet mask, network address, broadcast, and usable hosts.</p>
+                    <span class="tag">IPv4</span>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="tool-card" data-tool="ping">
+                    <span class="icon">📡</span>
+                    <h3>Ping Tool</h3>
+                    <p>Test network latency and packet loss to any host or IP address.</p>
+                    <span class="tag">ICMP</span>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="tool-card" data-tool="dns">
+                    <span class="icon">🔍</span>
+                    <h3>DNS Lookup</h3>
+                    <p>Resolve domain names to IP addresses and view DNS records.</p>
+                    <span class="tag">DNS</span>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="tool-card" data-tool="port">
+                    <span class="icon">🔌</span>
+                    <h3>Port Scanner</h3>
+                    <p>Scan common ports to check for open services on a target host.</p>
+                    <span class="tag">TCP</span>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="tool-card" data-tool="whois">
+                    <span class="icon">👤</span>
+                    <h3>IP WHOIS</h3>
+                    <p>Look up ownership and registration details for any IP address.</p>
+                    <span class="tag">WHOIS</span>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="tool-card" data-tool="speed">
+                    <span class="icon">⚡</span>
+                    <h3>Speed Test</h3>
+                    <p>Estimate your network download and upload speeds.</p>
+                    <span class="tag">Bandwidth</span>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="tool-card" data-tool="mac">
+                    <span class="icon">🖥️</span>
+                    <h3>MAC Lookup</h3>
+                    <p>Find the vendor or manufacturer of any MAC address.</p>
+                    <span class="tag">OUI</span>
+                    <span class="arrow">→</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Tool Panel -->
+            <div class="tool-panel reveal" id="toolPanel">
+                <button class="close-panel" id="closePanel" aria-label="Close tool panel">✕</button>
+                <div id="toolContent">
+                    <!-- filled dynamically by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- AD PLACEHOLDER – MIDDLE -->
+    <!-- ════════════════════════════════════════ -->
+    <div class="container">
+        <div class="ad-placeholder" id="ad-middle">
+            <span class="ad-label">📢 Advertisement</span>
+            <span class="ad-content">Your Google AdSense unit will appear here.</span>
+            <span style="font-size:0.75rem;opacity:0.5;">Replace with your ad code after approval.</span>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- TEACHING MATERIALS -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="teaching">
+        <div class="container">
+            <div class="section-header reveal">
+                <div>
+                    <h2 class="section-title">📚 Teaching Materials</h2>
+                    <p class="section-sub">Structured learning resources for networking students and professionals.</p>
+                </div>
+            </div>
+
+            <div class="teaching-grid reveal" id="teachingGrid">
+                <div class="teaching-card" data-section="basics">
+                    <div class="icon">📖</div>
+                    <h3>Networking Basics</h3>
+                    <p>OSI model, TCP/IP, Ethernet, and fundamental concepts.</p>
+                    <ul class="sub-menu">
+                        <li>OSI Layers</li>
+                        <li>TCP/IP Suite</li>
+                        <li>Ethernet</li>
+                        <li>IP Addressing</li>
+                    </ul>
+                </div>
+                <div class="teaching-card" data-section="subnetting">
+                    <div class="icon">📐</div>
+                    <h3>Subnetting Guide</h3>
+                    <p>CIDR, VLSM, subnet masks, and practical subnet design.</p>
+                    <ul class="sub-menu">
+                        <li>CIDR Notation</li>
+                        <li>VLSM</li>
+                        <li>Subnet Design</li>
+                        <li>Practice Problems</li>
+                    </ul>
+                </div>
+                <div class="teaching-card" data-section="tcpip">
+                    <div class="icon">📡</div>
+                    <h3>TCP/IP Fundamentals</h3>
+                    <p>Deep dive into TCP, UDP, IP, and core protocols.</p>
+                    <ul class="sub-menu">
+                        <li>TCP vs UDP</li>
+                        <li>IP Headers</li>
+                        <li>Ports &amp; Sockets</li>
+                        <li>ARP &amp; ICMP</li>
+                    </ul>
+                </div>
+                <div class="teaching-card" data-section="security">
+                    <div class="icon">🔒</div>
+                    <h3>Network Security</h3>
+                    <p>Firewalls, VPNs, encryption, and security best practices.</p>
+                    <ul class="sub-menu">
+                        <li>Firewalls</li>
+                        <li>VPN &amp; IPsec</li>
+                        <li>Encryption</li>
+                        <li>Zero Trust</li>
+                    </ul>
+                </div>
+                <div class="teaching-card" data-section="routing">
+                    <div class="icon">🔄</div>
+                    <h3>Routing &amp; Switching</h3>
+                    <p>OSPF, BGP, VLANs, and network infrastructure design.</p>
+                    <ul class="sub-menu">
+                        <li>OSPF</li>
+                        <li>BGP</li>
+                        <li>VLANs</li>
+                        <li>STP</li>
+                    </ul>
+                </div>
+                <div class="teaching-card" data-section="cloud">
+                    <div class="icon">☁️</div>
+                    <h3>Cloud Networking</h3>
+                    <p>AWS, Azure, GCP networking, VPCs, and hybrid cloud.</p>
+                    <ul class="sub-menu">
+                        <li>VPC Design</li>
+                        <li>Cloud DNS</li>
+                        <li>Load Balancing</li>
+                        <li>Hybrid Cloud</li>
+                    </ul>
+                </div>
+                <div class="teaching-card" data-section="exam">
+                    <div class="icon">🎯</div>
+                    <h3>Exam Prep</h3>
+                    <p>CCNA, Network+, and other certification study guides.</p>
+                    <ul class="sub-menu">
+                        <li>CCNA</li>
+                        <li>Network+</li>
+                        <li>Security+</li>
+                        <li>Practice Exams</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Teaching detail panel (hidden until a card is clicked) -->
+            <div class="tool-panel reveal" id="teachingPanel" style="display:none;">
+                <button class="close-panel" id="closeTeachingPanel" aria-label="Close teaching panel">✕</button>
+                <div id="teachingContent">
+                    <h3 class="panel-title" id="teachingPanelTitle">Networking Basics</h3>
+                    <p class="panel-desc" id="teachingPanelDesc">Detailed content will appear here.</p>
+                    <div id="teachingPanelBody" style="margin-top:16px;">
+                        <p>Select a teaching topic from the cards above to view detailed material.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- AD PLACEHOLDER – BOTTOM -->
+    <!-- ════════════════════════════════════════ -->
+    <div class="container">
+        <div class="ad-placeholder" id="ad-bottom">
+            <span class="ad-label">📢 Advertisement</span>
+            <span class="ad-content">Your Google AdSense unit will appear here.</span>
+            <span style="font-size:0.75rem;opacity:0.5;">Replace with your ad code after approval.</span>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- ABOUT & CONTACT -->
+    <!-- ════════════════════════════════════════ -->
+    <section id="about" style="padding-top:20px;">
+        <div class="container">
+            <div class="section-header reveal">
+                <div>
+                    <h2 class="section-title">ℹ️ About NetPro</h2>
+                    <p class="section-sub">Built for network engineers, students, and IT professionals.</p>
+                </div>
+            </div>
+            <div class="reveal" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;box-shadow:var(--shadow);">
+                <p style="font-size:1.05rem;margin-bottom:12px;">
+                    <strong>NetPro Tools</strong> is a free, open-source network utility suite designed to help
+                    you diagnose, analyze, and learn networking concepts — all from your browser.
+                </p>
+                <p style="color:var(--text-light);">
+                    Whether you're a student preparing for certification, a network admin troubleshooting
+                    connectivity, or just curious about how networks work, NetPro provides the tools and
+                    knowledge you need. No installation, no registration, no cost.
+                </p>
+                <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:16px;">
+                    <span style="background:var(--accent-glow);padding:4px 16px;border-radius:30px;font-size:0.85rem;">🔒 Privacy-first</span>
+                    <span style="background:var(--accent-glow);padding:4px 16px;border-radius:30px;font-size:0.85rem;">🌍 Open Source</span>
+                    <span style="background:var(--accent-glow);padding:4px 16px;border-radius:30px;font-size:0.85rem;">⚡ Always Free</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" style="padding-top:20px;">
+        <div class="container">
+            <div class="section-header reveal">
+                <div>
+                    <h2 class="section-title">📬 Contact</h2>
+                    <p class="section-sub">Have feedback or suggestions? Reach out.</p>
+                </div>
+            </div>
+            <div class="reveal" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;box-shadow:var(--shadow);">
+                <p style="color:var(--text-light);">
+                    We'd love to hear from you! For support, feature requests, or collaborations:
+                </p>
+                <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:20px;">
+                    <a href="mailto:hello@netprotools.dev" style="display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;padding:10px 24px;border-radius:40px;font-weight:500;text-decoration:none;transition:all var(--transition);">
+                        ✉️ hello@netprotools.dev
+                    </a>
+                    <a href="#" style="display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);padding:10px 24px;border-radius:40px;font-weight:500;text-decoration:none;color:var(--text);transition:all var(--transition);">
+                        🐦 Twitter
+                    </a>
+                    <a href="#" style="display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);padding:10px 24px;border-radius:40px;font-weight:500;text-decoration:none;color:var(--text);transition:all var(--transition);">
+                        💻 GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- FOOTER -->
+    <!-- ════════════════════════════════════════ -->
+    <footer>
+        <div class="container">
+            <div>
+                <h4>🌐 NetPro</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#teaching">Teaching</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Tools</h4>
+                <ul>
+                    <li><a href="#" data-tool="subnet">Subnet Calculator</a></li>
+                    <li><a href="#" data-tool="ping">Ping Tool</a></li>
+                    <li><a href="#" data-tool="dns">DNS Lookup</a></li>
+                    <li><a href="#" data-tool="port">Port Scanner</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Learn</h4>
+                <ul>
+                    <li><a href="#teaching" data-section="basics">Basics</a></li>
+                    <li><a href="#teaching" data-section="subnetting">Subnetting</a></li>
+                    <li><a href="#teaching" data-section="security">Security</a></li>
+                    <li><a href="#teaching" data-section="cloud">Cloud</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                </ul>
+            </div>
+            <div class="copyright">
+                &copy; 2026 NetPro Tools. Built with ❤️ for the networking community.
+                <br style="display:block;margin-top:4px;" />
+                <span style="font-size:0.75rem;opacity:0.6;">Google AdSense ready — replace placeholder ads with your own code.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- JAVASCRIPT – ALL TOOLS & INTERACTIONS -->
+    <!-- ════════════════════════════════════════ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── DOM refs ──────────────────────────────────────
+            const navLinks = document.getElementById('navLinks');
+            const hamburger = document.getElementById('hamburger');
+            const themeToggle = document.getElementById('themeToggle');
+            const toolPanel = document.getElementById('toolPanel');
+            const toolContent = document.getElementById('toolContent');
+            const closePanel = document.getElementById('closePanel');
+            const toolsGrid = document.getElementById('toolsGrid');
+            const teachingPanel = document.getElementById('teachingPanel');
+            const teachingContent = document.getElementById('teachingContent');
+            const closeTeachingPanel = document.getElementById('closeTeachingPanel');
+            const teachingGrid = document.getElementById('teachingGrid');
+
+            // ─── Theme ─────────────────────────────────────────
+            let dark = localStorage.getItem('theme') === 'dark' ||
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (dark) document.documentElement.classList.add('dark');
+            themeToggle.textContent = dark ? '☀️' : '🌙';
+
+            themeToggle.addEventListener('click', () => {
+                dark = !dark;
+                document.documentElement.classList.toggle('dark', dark);
+                themeToggle.textContent = dark ? '☀️' : '🌙';
+                localStorage.setItem('theme', dark ? 'dark' : 'light');
+            });
+
+            // ─── Mobile menu ──────────────────────────────────
+            hamburger.addEventListener('click', () => {
+                const open = navLinks.classList.toggle('open');
+                hamburger.setAttribute('aria-expanded', open);
+            });
+
+            // Close mobile menu on link click
+            navLinks.querySelectorAll('a, button').forEach(el => {
+                el.addEventListener('click', () => {
+                    navLinks.classList.remove('open');
+                    hamburger.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            // ─── Dropdown mobile toggle ──────────────────────
+            document.querySelectorAll('.has-dropdown > button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 920) {
+                        e.preventDefault();
+                        const li = btn.closest('.has-dropdown');
+                        li.classList.toggle('dropdown-open');
+                    }
+                });
+            });
+
+            // ─── Smooth reveal on scroll ──────────────────────
+            const reveals = document.querySelectorAll('.reveal');
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+            reveals.forEach(el => revealObserver.observe(el));
+
+            // ─── Tool definitions ─────────────────────────────
+            const TOOLS = {
+
+                subnet: {
+                    title: '🧮 Subnet Calculator',
+                    desc: 'Enter an IP address and CIDR prefix to calculate network details.',
+                    render: () => `
+                        <label for="subnetIp">IP Address</label>
+                        <input type="text" id="subnetIp" value="192.168.1.0" placeholder="e.g. 192.168.1.0" />
+
+                        <label for="subnetCidr">CIDR Prefix</label>
+                        <input type="number" id="subnetCidr" value="24" min="0" max="32" placeholder="e.g. 24" />
+
+                        <button class="btn" id="subnetBtn">🧮 Calculate</button>
+                        <div class="result-box" id="subnetResult">Enter an IP and CIDR, then click Calculate.</div>
+                    `,
+                    init: () => {
+                        document.getElementById('subnetBtn')?.addEventListener('click', () => {
+                            const ip = document.getElementById('subnetIp').value.trim();
+                            const cidr = parseInt(document.getElementById('subnetCidr').value);
+                            const result = document.getElementById('subnetResult');
+                            if (!ip || isNaN(cidr) || cidr < 0 || cidr > 32) {
+                                result.textContent = '❌ Please enter a valid IP and CIDR (0–32).';
+                                return;
+                            }
+                            const parts = ip.split('.').map(Number);
+                            if (parts.length !== 4 || parts.some(p => isNaN(p) || p < 0 || p > 255)) {
+                                result.textContent = '❌ Invalid IP address format.';
+                                return;
+                            }
+                            const ipInt = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
+                            const mask = ~0 << (32 - cidr);
+                            const net = ipInt & mask;
+                            const broadcast = net | ~mask;
+                            const first = net + 1;
+                            const last = broadcast - 1;
+                            const hosts = Math.max(0, broadcast - net - 1);
+
+                            const fmt = (n) => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+                            result.innerHTML = `
+                                <div class="result-row"><span class="label">Network Address</span> <span>${fmt(net)}</span></div>
+                                <div class="result-row"><span class="label">Broadcast Address</span> <span>${fmt(broadcast)}</span></div>
+                                <div class="result-row"><span class="label">First Usable Host</span> <span>${hosts > 0 ? fmt(first) : '—'}</span></div>
+                                <div class="result-row"><span class="label">Last Usable Host</span> <span>${hosts > 0 ? fmt(last) : '—'}</span></div>
+                                <div class="result-row"><span class="label">Total Usable Hosts</span> <span>${hosts}</span></div>
+                                <div class="result-row"><span class="label">Subnet Mask</span> <span>${fmt(mask)}</span></div>
+                                <div class="result-row"><span class="label">CIDR Notation</span> <span>/${cidr}</span></div>
+                            `;
+                        });
+                    }
+                },
+
+                ping: {
+                    title: '📡 Ping Tool',
+                    desc: 'Test connectivity to any host or IP address (simulated).',
+                    render: () => `
+                        <label for="pingHost">Hostname or IP</label>
+                        <input type="text" id="pingHost" value="google.com" placeholder="e.g. google.com" />
+
+                        <label for="pingCount">Packets</label>
+                        <input type="number" id="pingCount" value="4" min="1" max="20" />
+
+                        <button class="btn" id="pingBtn">📡 Ping</button>
+                        <div class="result-box" id="pingResult">Enter a host and click Ping.</div>
+                    `,
+                    init: () => {
+                        document.getElementById('pingBtn')?.addEventListener('click', () => {
+                            const host = document.getElementById('pingHost').value.trim() || 'unknown';
+                            const count = parseInt(document.getElementById('pingCount').value) || 4;
+                            const result = document.getElementById('pingResult');
+                            result.innerHTML = '⏳ Pinging ' + host + ' ...';
+                            let lines = [];
+                            let success = 0;
+                            let totalTime = 0;
+                            for (let i = 0; i < count; i++) {
+                                const time = 10 + Math.random() * 80;
+                                const lost = Math.random() < 0.08;
+                                if (!lost) {
+                                    success++;
+                                    totalTime += time;
+                                    lines.push(`Reply from ${host}: bytes=64 time=${time.toFixed(2)}ms TTL=64`);
+                                } else {
+                                    lines.push(`Request timed out.`);
+                                }
+                            }
+                            const avg = success > 0 ? (totalTime / success).toFixed(2) : '—';
+                            const loss = ((count - success) / count * 100).toFixed(0);
+                            setTimeout(() => {
+                                result.innerHTML =
+                                    lines.join('\n') +
+                                    `\n\n📊 Packets: Sent = ${count}, Received = ${success}, Lost = ${loss}% ` +
+                                    `(${count - success}), Avg RTT = ${avg}ms`;
+                            }, 400);
+                        });
+                    }
+                },
+
+                dns: {
+                    title: '🔍 DNS Lookup',
+                    desc: 'Resolve a domain name to its IP addresses (simulated).',
+                    render: () => `
+                        <label for="dnsDomain">Domain Name</label>
+                        <input type="text" id="dnsDomain" value="example.com" placeholder="e.g. example.com" />
+
+                        <label for="dnsType">Record Type</label>
+                        <select id="dnsType">
+                            <option value="A">A (IPv4)</option>
+                            <option value="AAAA">AAAA (IPv6)</option>
+                            <option value="CNAME">CNAME</option>
+                            <option value="MX">MX</option>
+                            <option value="TXT">TXT</option>
+                            <option value="NS">NS</option>
+                        </select>
+
+                        <button class="btn" id="dnsBtn">🔍 Lookup</button>
+                        <div class="result-box" id="dnsResult">Enter a domain and select record type.</div>
+                    `,
+                    init: () => {
+                        document.getElementById('dnsBtn')?.addEventListener('click', () => {
+                            const domain = document.getElementById('dnsDomain').value.trim() || 'example.com';
+                            const type = document.getElementById('dnsType').value;
+                            const result = document.getElementById('dnsResult');
+                            result.innerHTML = '⏳ Resolving ' + domain + ' (' + type + ') ...';
+                            const ips = ['93.184.216.34', '104.18.32.7', '172.217.5.78', '142.250.185.46',
+                                '2606:2800:220:1:248:1893:25c8:1946'
+                            ];
+                            const cnames = ['www.' + domain, 'cdn.' + domain];
+                            const mx = ['mail.' + domain, 'mx1.' + domain];
+                            const txt = ['v=spf1 include:_spf.google.com ~all', 'google-site-verification=...'];
+                            const ns = ['ns1.' + domain, 'ns2.' + domain];
+                            const random = (arr) => arr[Math.floor(Math.random() * arr.length)];
+                            setTimeout(() => {
+                                let lines = [];
+                                if (type === 'A') {
+                                    lines.push('A records for ' + domain + ':');
+                                    for (let i = 0; i < 2 + Math.floor(Math.random() * 3); i++) {
+                                        lines.push('  → ' + random(ips));
+                                    }
+                                } else if (type === 'AAAA') {
+                                    lines.push('AAAA records for ' + domain + ':');
+                                    for (let i = 0; i < 1 + Math.floor(Math.random() * 2); i++) {
+                                        lines.push('  → ' + random(ips).replace(/\./g, ':'));
+                                    }
+                                } else if (type === 'CNAME') {
+                                    lines.push('CNAME record for ' + domain + ':');
+                                    lines.push('  → ' + random(cnames));
+                                } else if (type === 'MX') {
+                                    lines.push('MX records for ' + domain + ':');
+                                    for (let i = 0; i < 2; i++) {
+                                        const pri = [10, 20, 30][i];
+                                        lines.push(`  ${pri} → ${random(mx)}`);
+                                    }
+                                } else if (type === 'TXT') {
+                                    lines.push('TXT records for ' + domain + ':');
+                                    for (let i = 0; i < 1 + Math.floor(Math.random() * 2); i++) {
+                                        lines.push('  "' + random(txt) + '"');
+                                    }
+                                } else if (type === 'NS') {
+                                    lines.push('NS records for ' + domain + ':');
+                                    for (let i = 0; i < 2; i++) {
+                                        lines.push('  → ' + random(ns));
+                                    }
+                                }
+                                result.textContent = lines.join('\n');
+                            }, 500);
+                        });
+                    }
+                },
+
+                port: {
+                    title: '🔌 Port Scanner',
+                    desc: 'Scan common ports on a target host (simulated).',
+                    render: () => `
+                        <label for="portHost">Hostname or IP</label>
+                        <input type="text" id="portHost" value="scanme.nmap.org" placeholder="e.g. scanme.nmap.org" />
+
+                        <label for="portRange">Port Range (e.g. 1-100)</label>
+                        <input type="text" id="portRange" value="20-80" placeholder="e.g. 20-80" />
+
+                        <button class="btn" id="portBtn">🔌 Scan</button>
+                        <div class="result-box" id="portResult">Enter a host and port range to scan.</div>
+                    `,
+                    init: () => {
+                        document.getElementById('portBtn')?.addEventListener('click', () => {
+                            const host = document.getElementById('portHost').value.trim() || 'unknown';
+                            const range = document.getElementById('portRange').value.trim() || '20-80';
+                            const result = document.getElementById('portResult');
+                            result.innerHTML = '⏳ Scanning ' + host + ' ...';
+                            const [start, end] = range.split('-').map(Number);
+                            if (isNaN(start) || isNaN(end) || start < 1 || end > 65535 || start > end) {
+                                result.textContent = '❌ Invalid port range. Use e.g. "20-80"';
+                                return;
+                            }
+                            const openPorts = [];
+                            const common = { 21: 'FTP', 22: 'SSH', 23: 'Telnet', 25: 'SMTP', 53: 'DNS',
+                                80: 'HTTP', 110: 'POP3', 143: 'IMAP', 443: 'HTTPS', 993: 'IMAPS',
+                                995: 'POP3S', 3306: 'MySQL', 5432: 'PostgreSQL', 3389: 'RDP', 5900: 'VNC' };
+                            for (let p = start; p <= end; p++) {
+                                if (Math.random() < 0.12) {
+                                    openPorts.push(p);
+                                }
+                            }
+                            // ensure some well-known appear if in range
+                            [22, 80, 443, 53].forEach(p => {
+                                if (p >= start && p <= end && !openPorts.includes(p) && Math.random() <
+                                    0.5) {
+                                    openPorts.push(p);
+                                }
+                            });
+                            openPorts.sort((a, b) => a - b);
+                            setTimeout(() => {
+                                if (openPorts.length === 0) {
+                                    result.textContent = `🔒 No open ports found in range ${start}-${end} on ${host}.`;
+                                } else {
+                                    let lines = [`📡 Open ports on ${host} (${start}-${end}):`];
+                                    openPorts.forEach(p => {
+                                        const svc = common[p] || 'unknown';
+                                        lines.push(`  ✅ ${p}  (${svc})`);
+                                    });
+                                    result.textContent = lines.join('\n');
+                                }
+                            }, 600 + Math.random() * 400);
+                        });
+                    }
+                },
+
+                whois: {
+                    title: '👤 IP WHOIS',
+                    desc: 'Look up ownership details for an IP address (simulated).',
+                    render: () => `
+                        <label for="whoisIp">IP Address</label>
+                        <input type="text" id="whoisIp" value="8.8.8.8" placeholder="e.g. 8.8.8.8" />
+
+                        <button class="btn" id="whoisBtn">👤 Lookup</button>
+                        <div class="result-box" id="whoisResult">Enter an IP address and click Lookup.</div>
+                    `,
+                    init: () => {
+                        document.getElementById('whoisBtn')?.addEventListener('click', () => {
+                            const ip = document.getElementById('whoisIp').value.trim() || '8.8.8.8';
+                            const result = document.getElementById('whoisResult');
+                            result.innerHTML = '⏳ Querying WHOIS for ' + ip + ' ...';
+                            const orgs = ['Google LLC', 'CloudFlare Inc.', 'Amazon Web Services',
+                                'Microsoft Corporation', 'Akamai Technologies', 'Fastly Inc.'
+                            ];
+                            const countries = ['US', 'DE', 'GB', 'JP', 'CA', 'FR', 'AU'];
+                            const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+                            setTimeout(() => {
+                                const org = rand(orgs);
+                                const country = rand(countries);
+                                result.innerHTML = `
+                                    WHOIS record for ${ip}
+                                    ──────────────────────────────
+                                    Org Name      : ${org}
+                                    Country       : ${country}
+                                    Registry      : ${['ARIN','RIPE','APNIC','LACNIC'][Math.floor(Math.random()*4)]}
+                                    Net Range     : ${ip.replace(/\.\d+$/, '.0/24')}
+                                    CIDR          : ${ip.replace(/\.\d+$/, '.0/24')}
+                                    Abuse Contact : abuse@${org.toLowerCase().replace(/\s/g,'')}.com
+                                    Last Updated  : ${new Date().toISOString().slice(0,10)}
+                                `;
+                            }, 500);
+                        });
+                    }
+                },
+
+                speed: {
+                    title: '⚡ Speed Test',
+                    desc: 'Estimate your download and upload speeds (simulated).',
+                    render: () => `
+                        <p style="color:var(--text-light);margin-bottom:12px;">Click the button below to run a speed test. This is a simulation.</p>
+                        <button class="btn" id="speedBtn">⚡ Run Speed Test</button>
+                        <div class="result-box" id="speedResult">Click "Run Speed Test" to begin.</div>
+                    `,
+                    init: () => {
+                        document.getElementById('speedBtn')?.addEventListener('click', () => {
+                            const result = document.getElementById('speedResult');
+                            result.innerHTML = '⏳ Testing connection ...';
+                            const download = (20 + Math.random() * 180).toFixed(1);
+                            const upload = (5 + Math.random() * 60).toFixed(1);
+                            const ping = (8 + Math.random() * 42).toFixed(0);
+                            const jitter = (1 + Math.random() * 8).toFixed(1);
+                            setTimeout(() => {
+                                result.innerHTML = `
+                                    📥 Download: ${download} Mbps
+                                    📤 Upload:   ${upload} Mbps
+                                    📶 Ping:     ${ping} ms
+                                    〰️ Jitter:   ${jitter} ms
+                                    ──────────────────────────────
+                                    ✅ Test complete.
+                                `;
+                            }, 1200 + Math.random() * 800);
+                        });
+                    }
+                },
+
+                mac: {
+                    title: '🖥️ MAC Lookup',
+                    desc: 'Find the vendor or manufacturer for any MAC address.',
+                    render: () => `
+                        <label for="macAddr">MAC Address</label>
+                        <input type="text" id="macAddr" value="00:1A:2B:3C:4D:5E" placeholder="e.g. 00:1A:2B:3C:4D:5E" />
+
+                        <button class="btn" id="macBtn">🔍 Lookup</button>
+                        <div class="result-box" id="macResult">Enter a MAC address and click Lookup.</div>
+                    `,
+                    init: () => {
+                        document.getElementById('macBtn')?.addEventListener('click', () => {
+                            const mac = document.getElementById('macAddr').value.trim().toUpperCase();
+                            const result = document.getElementById('macResult');
+                            // Basic MAC validation
+                            const clean = mac.replace(/[^0-9A-F]/g, '');
+                            if (clean.length !== 12) {
+                                result.textContent = '❌ Invalid MAC address. Use format like 00:1A:2B:3C:4D:5E';
+                                return;
+                            }
+                            const oui = clean.slice(0, 6);
+                            const vendors = {
+                                '001A2B': 'Cisco Systems',
+                                '0050F2': 'Microsoft',
+                                '00D08C': 'Dell Inc.',
+                                '001B63': 'Apple Inc.',
+                                '001E4F': 'Google Inc.',
+                                '002590': 'Intel Corporation',
+                                '001A11': 'Broadcom',
+                                '0080C6': 'Hewlett Packard',
+                                '0050BA': 'Siemens',
+                                '001A6B': 'Nokia',
+                                '001C42': 'Juniper Networks',
+                                '001122': 'Test Vendor',
+                                '001A2C': 'Samsung',
+                                '001A3D': 'LG Electronics',
+                                '001A4E': 'Sony',
+                            };
+                            const vendor = vendors[oui] || 'Unknown / Unassigned';
+                            result.innerHTML = `
+                                MAC Address   : ${mac}
+                                OUI (Prefix)  : ${oui}
+                                Vendor        : ${vendor}
+                                ──────────────────────────────
+                                ✅ Lookup complete.
+                            `;
+                        });
+                    }
+                }
+            };
+
+            // ─── Open tool ─────────────────────────────────────
+            function openTool(toolKey) {
+                const tool = TOOLS[toolKey];
+                if (!tool) return;
+
+                // Close teaching panel if open
+                teachingPanel.style.display = 'none';
+
+                toolContent.innerHTML = `
+                    <h3 class="panel-title">${tool.title}</h3>
+                    <p class="panel-desc">${tool.desc}</p>
+                    ${tool.render()}
+                `;
+                toolPanel.classList.add('active');
+                toolPanel.style.display = 'block';
+                toolPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Init tool after DOM update
+                requestAnimationFrame(() => {
+                    if (tool.init) tool.init();
+                });
+            }
+
+            // ─── Tool card clicks ─────────────────────────────
+            toolsGrid.addEventListener('click', (e) => {
+                const card = e.target.closest('.tool-card');
+                if (!card) return;
+                const tool = card.dataset.tool;
+                if (tool && TOOLS[tool]) {
+                    openTool(tool);
+                    // highlight active nav
+                    document.querySelectorAll('.nav-links a[data-tool]').forEach(el => {
+                        el.classList.toggle('active', el.dataset.tool === tool);
+                    });
+                }
+            });
+
+            // ─── Nav tool links ──────────────────────────────
+            document.querySelectorAll('.nav-links a[data-tool], footer a[data-tool]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tool = el.dataset.tool;
+                    if (tool && TOOLS[tool]) {
+                        openTool(tool);
+                        // close mobile menu
+                        navLinks.classList.remove('open');
+                        hamburger.setAttribute('aria-expanded', 'false');
+                        // update active
+                        document.querySelectorAll('.nav-links a[data-tool]').forEach(a => {
+                            a.classList.toggle('active', a.dataset.tool === tool);
+                        });
+                    }
+                });
+            });
+
+            // ─── Close tool panel ─────────────────────────────
+            closePanel.addEventListener('click', () => {
+                toolPanel.classList.remove('active');
+                toolPanel.style.display = 'none';
+            });
+
+            // ─── Teaching panel ──────────────────────────────
+            const teachingData = {
+                basics: {
+                    title: '📖 Networking Basics',
+                    desc: 'Foundational concepts every network professional should know.',
+                    body: `
+                        <h4 style="margin:16px 0 8px;">The OSI Model</h4>
+                        <p>The OSI (Open Systems Interconnection) model has 7 layers: Physical, Data Link, Network, Transport, Session, Presentation, and Application. Each layer serves a specific function in network communication.</p>
+                        <h4 style="margin:16px 0 8px;">TCP/IP Suite</h4>
+                        <p>The TCP/IP model has 4 layers: Network Interface, Internet, Transport, and Application. It is the foundation of the modern internet.</p>
+                        <h4 style="margin:16px 0 8px;">IP Addressing</h4>
+                        <p>IPv4 addresses are 32-bit numbers, typically written in dotted-decimal notation (e.g., 192.168.1.1). IPv6 uses 128-bit addresses to solve the exhaustion problem.</p>
+                        <ul style="margin:8px 0 0 20px;color:var(--text-light);">
+                            <li>Class A, B, C networks</li>
+                            <li>Private vs public IPs</li>
+                            <li>NAT and its role</li>
+                        </ul>
+                    `
+                },
+                subnetting: {
+                    title: '📐 Subnetting Guide',
+                    desc: 'Learn how to design and calculate subnets like a pro.',
+                    body: `
+                        <h4 style="margin:16px 0 8px;">CIDR Notation</h4>
+                        <p>CIDR (Classless Inter-Domain Routing) uses a prefix length (e.g., /24) to specify the network mask. It replaces the older class-based system.</p>
+                        <h4 style="margin:16px 0 8px;">VLSM (Variable Length Subnet Mask)</h4>
+                        <p>VLSM allows you to use different subnet masks for different subnets within the same network, enabling efficient address utilization.</p>
+                        <h4 style="margin:16px 0 8px;">Practical Subnet Design</h4>
+                        <p>When designing subnets, consider: number of hosts needed, future growth, and routing efficiency. Always plan for at least 20% growth.</p>
+                        <p style="margin-top:12px;background:var(--code-bg);padding:12px 16px;border-radius:8px;border:1px solid var(--border);">
+                            💡 <strong>Tip:</strong> Use the subnet calculator above to verify your designs.
+                        </p>
+                    `
+                },
+                tcpip: {
+                    title: '📡 TCP/IP Fundamentals',
+                    desc: 'Deep dive into the core protocols of the internet.',
+                    body: `
+                        <h4 style="margin:16px 0 8px;">TCP vs UDP</h4>
+                        <p>TCP is connection-oriented, reliable, and ensures ordered delivery. UDP is connectionless, faster, but does not guarantee delivery or order.</p>
+                        <h4 style="margin:16px 0 8px;">IP Headers</h4>
+                        <p>The IPv4 header contains fields like Source IP, Destination IP, TTL, Protocol, and Checksum. IPv6 simplifies the header for efficiency.</p>
+                        <h4 style="margin:16px 0 8px;">Ports & Sockets</h4>
+                        <p>A port number (0-65535) identifies a specific process or service. Common ports: 80 (HTTP), 443 (HTTPS), 22 (SSH), 53 (DNS).</p>
+                        <h4 style="margin:16px 0 8px;">ARP & ICMP</h4>
+                        <p>ARP resolves IP addresses to MAC addresses on local networks. ICMP is used for diagnostics (ping, traceroute) and error reporting.</p>
+                    `
+                },
+                security: {
+                    title: '🔒 Network Security',
+                    desc: 'Protect your network with modern security practices.',
+                    body: `
+                        <h4 style="margin:16px 0 8px;">Firewalls</h4>
+                        <p>Firewalls filter traffic based on rules. Types include: packet-filtering, stateful inspection, and next-generation firewalls (NGFW).</p>
+                        <h4 style="margin:16px 0 8px;">VPN & IPsec</h4>
+                        <p>VPNs create secure tunnels over public networks. IPsec provides encryption and authentication at the IP layer.</p>
+                        <h4 style="margin:16px 0 8px;">Encryption</h4>
+                        <p>Use TLS/SSL for transport-layer security. For data at rest, use AES-256 or stronger. Always use strong key management.</p>
+                        <h4 style="margin:16px 0 8px;">Zero Trust Model</h4>
+                        <p>Zero Trust assumes no implicit trust. Every access request is authenticated, authorized, and encrypted. "Never trust, always verify."</p>
+                    `
+                },
+                routing: {
+                    title: '🔄 Routing & Switching',
+                    desc: 'Understand how data moves across networks.',
+                    body: `
+                        <h4 style="margin:16px 0 8px;">OSPF (Open Shortest Path First)</h4>
+                        <p>OSPF is a link-state routing protocol that uses the SPF algorithm to find the best path. It supports VLSM and fast convergence.</p>
+                        <h4 style="margin:16px 0 8px;">BGP (Border Gateway Protocol)</h4>
+                        <p>BGP is the protocol that runs the internet. It exchanges routing information between autonomous systems (AS).</p>
+                        <h4 style="margin:16px 0 8px;">VLANs</h4>
+                        <p>Virtual LANs logically segment networks at Layer 2, improving security, performance, and manageability.</p>
+                        <h4 style="margin:16px 0 8px;">STP (Spanning Tree Protocol)</h4>
+                        <p>STP prevents loops in Ethernet networks by blocking redundant paths, ensuring a loop-free topology.</p>
+                    `
+                },
+                cloud: {
+                    title: '☁️ Cloud Networking',
+                    desc: 'Modern networking in the cloud era.',
+                    body: `
+                        <h4 style="margin:16px 0 8px;">VPC Design</h4>
+                        <p>Virtual Private Clouds are isolated network environments in the cloud. Design with public and private subnets, route tables, and internet gateways.</p>
+                        <h4 style="margin:16px 0 8px;">Cloud DNS</h4>
+                        <p>Cloud providers offer DNS services (AWS Route 53, Azure DNS, Google Cloud DNS) for domain management and health checks.</p>
+                        <h4 style="margin:16px 0 8px;">Load Balancing</h4>
+                        <p>Distribute traffic across multiple instances for high availability and scalability. Types: Application LB, Network LB, and Global LB.</p>
+                        <h4 style="margin:16px 0 8px;">Hybrid Cloud Networking</h4>
+                        <p>Connect on-premises networks to cloud VPCs using VPNs, Direct Connect, or ExpressRoute. Ensure low latency and high security.</p>
+                    `
+                },
+                exam: {
+                    title: '🎯 Exam Prep',
+                    desc: 'Prepare for networking certifications with confidence.',
+                    body: `
+                        <h4 style="margin:16px 0 8px;">CCNA (Cisco Certified Network Associate)</h4>
+                        <p>Topics: IP addressing, subnetting, OSPF, EIGRP, VLANs, STP, security, automation, and network fundamentals.</p>
+                        <h4 style="margin:16px 0 8px;">Network+ (CompTIA)</h4>
+                        <p>Topics: OSI model, TCP/IP, routing, switching, wireless, network security, troubleshooting, and network operations.</p>
+                        <h4 style="margin:16px 0 8px;">Security+ (CompTIA)</h4>
+                        <p>Topics: cryptography, identity management, risk assessment, threats, vulnerabilities, and security controls.</p>
+                        <h4 style="margin:16px 0 8px;">Study Tips</h4>
+                        <ul style="margin:8px 0 0 20px;color:var(--text-light);">
+                            <li>Practice with subnet calculators and simulators.</li>
+                            <li>Use flashcards for port numbers and protocols.</li>
+                            <li>Join study groups and online forums.</li>
+                            <li>Take timed practice exams to build speed.</li>
+                        </ul>
+                    `
+                }
+            };
+
+            // Open teaching detail
+            function openTeaching(sectionKey) {
+                const data = teachingData[sectionKey];
+                if (!data) return;
+
+                // Close tool panel if open
+                toolPanel.classList.remove('active');
+                toolPanel.style.display = 'none';
+
+                document.getElementById('teachingPanelTitle').textContent = data.title;
+                document.getElementById('teachingPanelDesc').textContent = data.desc;
+                document.getElementById('teachingPanelBody').innerHTML = data.body;
+                teachingPanel.style.display = 'block';
+                teachingPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Teaching card clicks
+            teachingGrid.addEventListener('click', (e) => {
+                const card = e.target.closest('.teaching-card');
+                if (!card) return;
+                const section = card.dataset.section;
+                if (section && teachingData[section]) {
+                    openTeaching(section);
+                    // highlight nav
+                    document.querySelectorAll('.nav-links a[data-section]').forEach(el => {
+                        el.classList.toggle('active', el.dataset.section === section);
+                    });
+                }
+            });
+
+            // Nav teaching links
+            document.querySelectorAll('.nav-links a[data-section], footer a[data-section]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = el.dataset.section;
+                    if (section && teachingData[section]) {
+                        openTeaching(section);
+                        navLinks.classList.remove('open');
+                        hamburger.setAttribute('aria-expanded', 'false');
+                        document.querySelectorAll('.nav-links a[data-section]').forEach(a => {
+                            a.classList.toggle('active', a.dataset.section === section);
+                        });
+                    }
+                });
+            });
+
+            // Close teaching panel
+            closeTeachingPanel.addEventListener('click', () => {
+                teachingPanel.style.display = 'none';
+            });
+
+            // ─── Home nav link ──────────────────────────────
+            document.querySelectorAll('.nav-links a[href="#home"]').forEach(el => {
+                el.addEventListener('click', () => {
+                    toolPanel.classList.remove('active');
+                    toolPanel.style.display = 'none';
+                    teachingPanel.style.display = 'none';
+                    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+                    el.classList.add('active');
+                });
+            });
+
+            // ─── Auto-open tool from URL hash ────────────────
+            const hash = window.location.hash.replace('#', '');
+            if (hash && TOOLS[hash]) {
+                setTimeout(() => openTool(hash), 400);
+            } else if (hash && teachingData[hash]) {
+                setTimeout(() => openTeaching(hash), 400);
+            }
+
+            // ─── Keyboard shortcut: Escape closes panels ────
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (toolPanel.classList.contains('active')) {
+                        toolPanel.classList.remove('active');
+                        toolPanel.style.display = 'none';
+                    }
+                    if (teachingPanel.style.display === 'block') {
+                        teachingPanel.style.display = 'none';
+                    }
+                }
+            });
+
+            // ─── Make tool cards accessible via Enter ────────
+            document.querySelectorAll('.tool-card, .teaching-card').forEach(el => {
+                el.setAttribute('tabindex', '0');
+                el.setAttribute('role', 'button');
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        el.click();
+                    }
+                });
+            });
+
+        })();
+    </script>
+
+</body>
 </html>
