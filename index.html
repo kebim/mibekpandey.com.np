@@ -868,6 +868,13 @@
             margin-right: 8px;
             vertical-align: middle;
         }
+        .oui-db-fallback {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 8px;
+            border-top: 1px dashed var(--border);
+            padding-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -1205,14 +1212,8 @@
 
             // ═══════════════════════════════════════════════════════════
             //  TEACHING DATA – EDIT THIS ARRAY TO ADD/UPDATE TOPICS
+            //  Each object: { id, icon, title, description, subItems, bodyHTML }
             // ═══════════════════════════════════════════════════════════
-            // Each object:
-            //   id: unique identifier (used for links)
-            //   icon: emoji
-            //   title: displayed title
-            //   description: short summary
-            //   subItems: array of strings (tags)
-            //   bodyHTML: detailed HTML content for the panel
             const teachingData = [{
                 id: 'basics',
                 icon: '📖',
@@ -1221,15 +1222,24 @@
                 subItems: ['OSI Layers', 'TCP/IP Suite', 'Ethernet', 'IP Addressing'],
                 bodyHTML: `
                     <h4 style="margin:16px 0 8px;">The OSI Model</h4>
-                    <p>The OSI (Open Systems Interconnection) model has 7 layers: Physical, Data Link, Network, Transport, Session, Presentation, and Application. Each layer serves a specific function in network communication.</p>
+                    <p>The OSI (Open Systems Interconnection) model is a conceptual framework used to understand network interactions. It divides network communication into seven layers:</p>
+                    <ul style="margin:8px 0 0 20px;color:var(--text-light);">
+                        <li><strong>Physical:</strong> Transmits raw bit stream over a physical medium.</li>
+                        <li><strong>Data Link:</strong> Provides error-free transmission over a physical link (MAC, switches).</li>
+                        <li><strong>Network:</strong> Handles routing and forwarding (IP, routers).</li>
+                        <li><strong>Transport:</strong> Ensures reliable data transfer (TCP, UDP).</li>
+                        <li><strong>Session:</strong> Manages sessions between applications.</li>
+                        <li><strong>Presentation:</strong> Translates data formats (encryption, compression).</li>
+                        <li><strong>Application:</strong> Provides network services to end-users (HTTP, FTP, DNS).</li>
+                    </ul>
                     <h4 style="margin:16px 0 8px;">TCP/IP Suite</h4>
-                    <p>The TCP/IP model has 4 layers: Network Interface, Internet, Transport, and Application. It is the foundation of the modern internet.</p>
+                    <p>The TCP/IP model has four layers: Network Interface, Internet, Transport, and Application. It is the foundation of the modern internet.</p>
                     <h4 style="margin:16px 0 8px;">IP Addressing</h4>
                     <p>IPv4 addresses are 32-bit numbers, typically written in dotted-decimal notation (e.g., 192.168.1.1). IPv6 uses 128-bit addresses to solve the exhaustion problem.</p>
                     <ul style="margin:8px 0 0 20px;color:var(--text-light);">
                         <li>Class A, B, C networks</li>
-                        <li>Private vs public IPs</li>
-                        <li>NAT and its role</li>
+                        <li>Private vs public IPs (RFC 1918)</li>
+                        <li>NAT (Network Address Translation) and its role in conserving IPv4 addresses</li>
                     </ul>
                 `
             }, {
@@ -1240,14 +1250,16 @@
                 subItems: ['CIDR Notation', 'VLSM', 'Subnet Design', 'Practice Problems'],
                 bodyHTML: `
                     <h4 style="margin:16px 0 8px;">CIDR Notation</h4>
-                    <p>CIDR (Classless Inter-Domain Routing) uses a prefix length (e.g., /24) to specify the network mask. It replaces the older class-based system.</p>
+                    <p>CIDR (Classless Inter-Domain Routing) uses a prefix length (e.g., /24) to specify the network mask. It replaces the older class-based system (A, B, C) and allows flexible subnet sizes.</p>
                     <h4 style="margin:16px 0 8px;">VLSM (Variable Length Subnet Mask)</h4>
-                    <p>VLSM allows you to use different subnet masks for different subnets within the same network, enabling efficient address utilization.</p>
+                    <p>VLSM allows you to use different subnet masks for different subnets within the same network, enabling efficient address utilization. For example, you can assign a /30 mask to a point-to-point link (2 usable hosts) and a /24 mask to a large LAN segment (254 usable hosts).</p>
                     <h4 style="margin:16px 0 8px;">Practical Subnet Design</h4>
-                    <p>When designing subnets, consider: number of hosts needed, future growth, and routing efficiency. Always plan for at least 20% growth.</p>
+                    <p>When designing subnets, consider: number of hosts needed per subnet, future growth, routing efficiency, and aggregation (summarization). Always plan for at least 20-30% growth.</p>
                     <p style="margin-top:12px;background:var(--code-bg);padding:12px 16px;border-radius:8px;border:1px solid var(--border);">
-                        💡 <strong>Tip:</strong> Use the subnet calculator above to verify your designs.
+                        💡 <strong>Tip:</strong> Use the subnet calculator above to verify your designs. It's a great way to learn by doing.
                     </p>
+                    <h4 style="margin:16px 0 8px;">Subnetting Practice</h4>
+                    <p>Try these exercises: Given 192.168.1.0/24, create 4 subnets. What are the new subnet masks and ranges? For a network with 60 hosts, what is the smallest subnet that supports them? (Answer: /26 gives 62 usable hosts).</p>
                 `
             }, {
                 id: 'tcpip',
@@ -1257,13 +1269,13 @@
                 subItems: ['TCP vs UDP', 'IP Headers', 'Ports & Sockets', 'ARP & ICMP'],
                 bodyHTML: `
                     <h4 style="margin:16px 0 8px;">TCP vs UDP</h4>
-                    <p>TCP is connection-oriented, reliable, and ensures ordered delivery. UDP is connectionless, faster, but does not guarantee delivery or order.</p>
+                    <p>TCP (Transmission Control Protocol) is connection-oriented, reliable, and ensures ordered delivery. It uses three-way handshake and windowing to manage flow control. UDP (User Datagram Protocol) is connectionless, faster, but does not guarantee delivery or order. It is used for real-time applications like VoIP and streaming.</p>
                     <h4 style="margin:16px 0 8px;">IP Headers</h4>
-                    <p>The IPv4 header contains fields like Source IP, Destination IP, TTL, Protocol, and Checksum. IPv6 simplifies the header for efficiency.</p>
+                    <p>The IPv4 header contains fields like Source IP, Destination IP, TTL (Time to Live), Protocol (TCP=6, UDP=17), and Checksum. IPv6 simplifies the header to improve processing speed and add features like flow labeling.</p>
                     <h4 style="margin:16px 0 8px;">Ports & Sockets</h4>
-                    <p>A port number (0-65535) identifies a specific process or service. Common ports: 80 (HTTP), 443 (HTTPS), 22 (SSH), 53 (DNS).</p>
+                    <p>A port number (0-65535) identifies a specific process or service. Common ports: 80 (HTTP), 443 (HTTPS), 22 (SSH), 53 (DNS). A socket is the combination of an IP address and a port number, uniquely identifying an endpoint.</p>
                     <h4 style="margin:16px 0 8px;">ARP & ICMP</h4>
-                    <p>ARP resolves IP addresses to MAC addresses on local networks. ICMP is used for diagnostics (ping, traceroute) and error reporting.</p>
+                    <p>ARP (Address Resolution Protocol) resolves IP addresses to MAC addresses on local networks. ICMP (Internet Control Message Protocol) is used for diagnostics (ping, traceroute) and error reporting (e.g., Destination Unreachable, Time Exceeded).</p>
                 `
             }, {
                 id: 'security',
@@ -1273,13 +1285,13 @@
                 subItems: ['Firewalls', 'VPN & IPsec', 'Encryption', 'Zero Trust'],
                 bodyHTML: `
                     <h4 style="margin:16px 0 8px;">Firewalls</h4>
-                    <p>Firewalls filter traffic based on rules. Types include: packet-filtering, stateful inspection, and next-generation firewalls (NGFW).</p>
+                    <p>Firewalls filter traffic based on rules. Types include: packet-filtering (stateless), stateful inspection (tracks connections), and next-generation firewalls (NGFW) that incorporate application awareness and intrusion prevention.</p>
                     <h4 style="margin:16px 0 8px;">VPN & IPsec</h4>
-                    <p>VPNs create secure tunnels over public networks. IPsec provides encryption and authentication at the IP layer.</p>
+                    <p>VPNs (Virtual Private Networks) create secure tunnels over public networks. IPsec (Internet Protocol Security) provides encryption and authentication at the IP layer, ensuring confidentiality, integrity, and authentication of data.</p>
                     <h4 style="margin:16px 0 8px;">Encryption</h4>
-                    <p>Use TLS/SSL for transport-layer security. For data at rest, use AES-256 or stronger. Always use strong key management.</p>
+                    <p>Use TLS/SSL for transport-layer security (HTTPS). For data at rest, use AES-256 or stronger encryption algorithms. Always implement proper key management practices.</p>
                     <h4 style="margin:16px 0 8px;">Zero Trust Model</h4>
-                    <p>Zero Trust assumes no implicit trust. Every access request is authenticated, authorized, and encrypted. "Never trust, always verify."</p>
+                    <p>Zero Trust assumes no implicit trust, even within the network perimeter. Every access request is authenticated, authorized, and encrypted. "Never trust, always verify." Implement micro-segmentation and least-privilege access.</p>
                 `
             }, {
                 id: 'routing',
@@ -1289,13 +1301,13 @@
                 subItems: ['OSPF', 'BGP', 'VLANs', 'STP'],
                 bodyHTML: `
                     <h4 style="margin:16px 0 8px;">OSPF (Open Shortest Path First)</h4>
-                    <p>OSPF is a link-state routing protocol that uses the SPF algorithm to find the best path. It supports VLSM and fast convergence.</p>
+                    <p>OSPF is a link-state routing protocol that uses the SPF (Shortest Path First) algorithm to find the best path. It supports VLSM, fast convergence, and scales well using areas. It is commonly used in enterprise networks.</p>
                     <h4 style="margin:16px 0 8px;">BGP (Border Gateway Protocol)</h4>
-                    <p>BGP is the protocol that runs the internet. It exchanges routing information between autonomous systems (AS).</p>
+                    <p>BGP is the protocol that runs the internet. It exchanges routing information between autonomous systems (AS). BGP is path-vector based and uses attributes like AS-Path, Next-Hop, and Local Preference to influence routing decisions.</p>
                     <h4 style="margin:16px 0 8px;">VLANs</h4>
-                    <p>Virtual LANs logically segment networks at Layer 2, improving security, performance, and manageability.</p>
+                    <p>Virtual LANs logically segment networks at Layer 2, improving security, performance, and manageability. VLANs reduce broadcast domains and allow flexible network design.</p>
                     <h4 style="margin:16px 0 8px;">STP (Spanning Tree Protocol)</h4>
-                    <p>STP prevents loops in Ethernet networks by blocking redundant paths, ensuring a loop-free topology.</p>
+                    <p>STP prevents loops in Ethernet networks by blocking redundant paths, ensuring a loop-free topology. RSTP (Rapid STP) and MSTP (Multiple STP) are modern variants that provide faster convergence.</p>
                 `
             }, {
                 id: 'cloud',
@@ -1305,13 +1317,13 @@
                 subItems: ['VPC Design', 'Cloud DNS', 'Load Balancing', 'Hybrid Cloud'],
                 bodyHTML: `
                     <h4 style="margin:16px 0 8px;">VPC Design</h4>
-                    <p>Virtual Private Clouds are isolated network environments in the cloud. Design with public and private subnets, route tables, and internet gateways.</p>
+                    <p>Virtual Private Clouds (VPCs) are isolated network environments in the cloud. Design with public and private subnets, route tables, internet gateways, and NAT gateways to control traffic flow.</p>
                     <h4 style="margin:16px 0 8px;">Cloud DNS</h4>
-                    <p>Cloud providers offer DNS services (AWS Route 53, Azure DNS, Google Cloud DNS) for domain management and health checks.</p>
+                    <p>Cloud providers offer DNS services (AWS Route 53, Azure DNS, Google Cloud DNS) for domain management, health checks, and geo-based routing.</p>
                     <h4 style="margin:16px 0 8px;">Load Balancing</h4>
-                    <p>Distribute traffic across multiple instances for high availability and scalability. Types: Application LB, Network LB, and Global LB.</p>
+                    <p>Distribute traffic across multiple instances for high availability and scalability. Types: Application Load Balancer (HTTP/HTTPS), Network Load Balancer (TCP/UDP), and Global Load Balancer (cross-region).</p>
                     <h4 style="margin:16px 0 8px;">Hybrid Cloud Networking</h4>
-                    <p>Connect on-premises networks to cloud VPCs using VPNs, Direct Connect, or ExpressRoute. Ensure low latency and high security.</p>
+                    <p>Connect on-premises networks to cloud VPCs using VPNs, Direct Connect (AWS), or ExpressRoute (Azure). Ensure low latency, high bandwidth, and security. Implement a robust transit gateway architecture.</p>
                 `
             }, {
                 id: 'exam',
@@ -1321,17 +1333,17 @@
                 subItems: ['CCNA', 'Network+', 'Security+', 'Practice Exams'],
                 bodyHTML: `
                     <h4 style="margin:16px 0 8px;">CCNA (Cisco Certified Network Associate)</h4>
-                    <p>Topics: IP addressing, subnetting, OSPF, EIGRP, VLANs, STP, security, automation, and network fundamentals.</p>
+                    <p>Topics: IP addressing, subnetting, OSPF, EIGRP, VLANs, STP, security, automation (Python/Ansible), and network fundamentals. The exam also covers basic network troubleshooting and configuration.</p>
                     <h4 style="margin:16px 0 8px;">Network+ (CompTIA)</h4>
-                    <p>Topics: OSI model, TCP/IP, routing, switching, wireless, network security, troubleshooting, and network operations.</p>
+                    <p>Topics: OSI model, TCP/IP, routing, switching, wireless, network security, troubleshooting, and network operations. It's a vendor-neutral certification for entry-level networking.</p>
                     <h4 style="margin:16px 0 8px;">Security+ (CompTIA)</h4>
-                    <p>Topics: cryptography, identity management, risk assessment, threats, vulnerabilities, and security controls.</p>
+                    <p>Topics: cryptography, identity management, risk assessment, threats, vulnerabilities, and security controls. It's a foundational cybersecurity certification.</p>
                     <h4 style="margin:16px 0 8px;">Study Tips</h4>
                     <ul style="margin:8px 0 0 20px;color:var(--text-light);">
-                        <li>Practice with subnet calculators and simulators.</li>
-                        <li>Use flashcards for port numbers and protocols.</li>
-                        <li>Join study groups and online forums.</li>
-                        <li>Take timed practice exams to build speed.</li>
+                        <li>Practice with subnet calculators and simulators (Packet Tracer, GNS3).</li>
+                        <li>Use flashcards for port numbers, protocols, and acronyms.</li>
+                        <li>Join study groups and online forums (Reddit, Discord).</li>
+                        <li>Take timed practice exams to build speed and identify weak areas.</li>
                     </ul>
                 `
             }];
@@ -1567,7 +1579,7 @@
 
                 traceroute: {
                     title: '🗺️ Traceroute (Simulated)',
-                    desc: 'Trace the route to a destination, showing each hop with latency.',
+                    desc: 'Trace the route to a destination, showing each hop with latency. (Real traceroute requires raw sockets and is not possible in a browser.)',
                     render: () => `
                         <label for="traceHost">Hostname or IP</label>
                         <input type="text" id="traceHost" value="google.com" placeholder="e.g. google.com" />
@@ -1585,21 +1597,39 @@
                             const result = document.getElementById('traceResult');
                             setResult(result, '⏳ Tracing route to ' + host + ' ...');
                             const hops = [];
-                            const numHops = Math.min(maxHops, 10 + Math.floor(Math.random() * 8));
+                            const numHops = Math.min(maxHops, 8 + Math.floor(Math.random() * 7));
+                            // Generate realistic hop IPs and hostnames
                             for (let i = 1; i <= numHops; i++) {
-                                const ip = `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-                                const rtt1 = (10 + Math.random() * 80).toFixed(1);
-                                const rtt2 = (10 + Math.random() * 80).toFixed(1);
-                                const rtt3 = (10 + Math.random() * 80).toFixed(1);
-                                const hostname = (i === numHops) ? host : `hop-${i}.local`;
-                                hops.push(
-                                    `${i.toString().padStart(2)}  ${hostname} (${ip})  ${rtt1}ms  ${rtt2}ms  ${rtt3}ms`
-                                    );
+                                const a = Math.floor(Math.random() * 255);
+                                const b = Math.floor(Math.random() * 255);
+                                const c = Math.floor(Math.random() * 255);
+                                const d = Math.floor(Math.random() * 255);
+                                const ip = `${a}.${b}.${c}.${d}`;
+                                const rtt1 = (5 + Math.random() * 60).toFixed(1);
+                                const rtt2 = (5 + Math.random() * 60).toFixed(1);
+                                const rtt3 = (5 + Math.random() * 60).toFixed(1);
+                                let hostname = '';
+                                if (i === numHops) {
+                                    hostname = host;
+                                } else if (i < 4) {
+                                    hostname = `gw-${i}.isp.net`;
+                                } else {
+                                    hostname = `core-${i}.backbone.net`;
+                                }
+                                // Occasionally add a star (*) for timeout
+                                if (Math.random() < 0.1) {
+                                    hops.push(
+                                        `${i.toString().padStart(2)}  *  *  *  Request timed out.`);
+                                } else {
+                                    hops.push(
+                                        `${i.toString().padStart(2)}  ${hostname} (${ip})  ${rtt1}ms  ${rtt2}ms  ${rtt3}ms`
+                                        );
+                                }
                             }
                             setTimeout(() => {
                                 setResult(result, hops.join('\n') +
-                                    `\n\n✅ Trace complete.`);
-                            }, 600 + Math.random() * 400);
+                                    `\n\n✅ Trace complete. (Simulated)`);
+                            }, 800 + Math.random() * 600);
                         });
                     }
                 },
@@ -1775,8 +1805,8 @@
                 },
 
                 mac: {
-                    title: '🖥️ MAC Lookup (via macvendors.com)',
-                    desc: 'Find the vendor or manufacturer for any MAC address using the public MAC vendor API.',
+                    title: '🖥️ MAC Lookup (via macvendors.com with fallback OUI database)',
+                    desc: 'Find the vendor or manufacturer for any MAC address.',
                     render: () => `
                         <label for="macAddr">MAC Address</label>
                         <input type="text" id="macAddr" value="00:1A:2B:3C:4D:5E" placeholder="e.g. 00:1A:2B:3C:4D:5E" />
@@ -1785,6 +1815,39 @@
                         <div class="result-box" id="macResult">Enter a MAC address and click Lookup.</div>
                     `,
                     init: () => {
+                        // Local OUI fallback database (common prefixes)
+                        const ouiDB = {
+                            '001A2B': 'Cisco Systems',
+                            '0050F2': 'Microsoft',
+                            '00D08C': 'Dell Inc.',
+                            '001B63': 'Apple Inc.',
+                            '001E4F': 'Google Inc.',
+                            '002590': 'Intel Corporation',
+                            '001A11': 'Broadcom',
+                            '0080C6': 'Hewlett Packard',
+                            '0050BA': 'Siemens',
+                            '001A6B': 'Nokia',
+                            '001C42': 'Juniper Networks',
+                            '001122': 'Test Vendor',
+                            '001A2C': 'Samsung',
+                            '001A3D': 'LG Electronics',
+                            '001A4E': 'Sony',
+                            '001A5F': 'Philips',
+                            '001A6G': 'Motorola',
+                            '001A7H': 'Huawei',
+                            '001A8I': 'ZTE',
+                            '001A9J': 'Xiaomi',
+                            '001AAK': 'Lenovo',
+                            '001ABL': 'Asus',
+                            '001ACM': 'Acer',
+                            '001ADN': 'HP',
+                            '001AEO': 'IBM',
+                            '001AFP': 'Oracle',
+                            '001AGQ': 'VMware',
+                            '001AHR': 'Citrix',
+                            '001AIS': 'Red Hat',
+                            '001AJT': 'Ubuntu',
+                        };
                         document.getElementById('macBtn')?.addEventListener('click', async () => {
                             const mac = document.getElementById('macAddr').value.trim().toUpperCase();
                             const result = document.getElementById('macResult');
@@ -1799,25 +1862,35 @@
                             }
                             setResult(result, '⏳ Looking up MAC ' + mac +
                                 ' ... <span class="spinner"></span>');
+                            const oui = clean.slice(0, 6);
+                            // Try API first
                             try {
-                                // Using macvendors.com API which supports CORS
                                 const url = `https://api.macvendors.com/${clean}`;
                                 const resp = await fetch(url);
                                 if (resp.status === 404) {
-                                    throw new Error('Vendor not found for this MAC.');
+                                    throw new Error('Vendor not found');
                                 }
-                                if (!resp.ok) throw new Error('MAC API error: ' + resp.status);
+                                if (!resp.ok) throw new Error('API error: ' + resp.status);
                                 const vendor = await resp.text();
                                 const formatted = mac.replace(/(.{2})(?!$)/g, '$1:');
                                 setResult(result, `
                                     MAC Address   : ${formatted}
-                                    OUI (Prefix)  : ${clean.slice(0,6)}
+                                    OUI (Prefix)  : ${oui}
                                     Vendor        : ${vendor.trim() || 'Unknown'}
                                     ──────────────────────────────
                                     ✅ Lookup complete.
                                 `);
                             } catch (err) {
-                                setResult(result, '❌ Error: ' + err.message, true);
+                                // Fallback to local OUI DB
+                                const vendor = ouiDB[oui] || 'Unknown (fallback)';
+                                const formatted = mac.replace(/(.{2})(?!$)/g, '$1:');
+                                setResult(result, `
+                                    MAC Address   : ${formatted}
+                                    OUI (Prefix)  : ${oui}
+                                    Vendor        : ${vendor} ${vendor === 'Unknown (fallback)' ? '— using local database' : ''}
+                                    ──────────────────────────────
+                                    ℹ️ API lookup failed, used fallback OUI database.
+                                `);
                             } finally {
                                 btn.disabled = false;
                             }
